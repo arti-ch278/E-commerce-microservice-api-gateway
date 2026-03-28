@@ -1,0 +1,179 @@
+server:
+  port: 8080
+
+spring:
+  application:
+    name: API-GATEWAY
+
+  cloud:
+    gateway:
+      routes:
+
+        # -------------------------------
+        # USER SERVICE
+        # -------------------------------
+        - id: user-service
+          uri: lb://USER-SERVICE
+          predicates:
+            - Path=/api/users/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /api/users/v3/api-docs(?<segment>.*)
+                replacement: /v3/api-docs${segment}
+
+        # -------------------------------
+        # PRODUCT SERVICE
+        # -------------------------------
+        - id: product-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/products/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /api/products/v3/api-docs(?<segment>.*)
+                replacement: /v3/api-docs${segment}
+
+        # -------------------------------
+        # CATEGORY SERVICE
+        # -------------------------------
+        - id: category-service
+          uri: lb://PRODUCT-SERVICE
+          predicates:
+            - Path=/api/categories/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /api/categories/v3/api-docs(?<segment>.*)
+                replacement: /v3/api-docs${segment}
+
+        # -------------------------------
+        # ORDER SERVICE
+        # -------------------------------
+        - id: order-service
+          uri: lb://ORDER-SERVICE
+          predicates:
+            - Path=/api/orders/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /api/orders/v3/api-docs(?<segment>.*)
+                replacement: /v3/api-docs${segment}
+
+        # -------------------------------
+        # INVENTORY SERVICE
+        # -------------------------------
+        - id: inventory-service
+          uri: lb://INVENTORY-SERVICE
+          predicates:
+            - Path=/api/inventory/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /api/inventory/v3/api-docs(?<segment>.*)
+                replacement: /v3/api-docs${segment}
+
+        # -------------------------------
+        # PAYMENT SERVICE
+        # -------------------------------
+        - id: payment-service
+          uri: lb://PAYMENT-SERVICE
+          predicates:
+            - Path=/api/payments/**
+          filters:
+            - name: RewritePath
+              args:
+                regexp: /api/payments/v3/api-docs(?<segment>.*)
+                replacement: /v3/api-docs${segment}
+
+eureka:
+  client:
+    service-url:
+      defaultZone: http://localhost:8761/eureka
+
+jwt:
+  secret: ${JWT_SECRET}
+  expiration-ms: 86400000
+  public-urls:
+    # Swagger & static
+    - /swagger-ui/**
+    - /swagger-ui.html
+    - /v3/api-docs/**
+    - /webjars/**
+    - /swagger-resources/**
+    - /favicon.ico
+
+    # Auth
+    - /api/users/register
+    - /api/users/login
+
+    # Microservice Swagger
+    - /api/users/v3/api-docs/**
+    - /api/products/v3/api-docs/**
+    - /api/categories/v3/api-docs/**
+    - /api/orders/v3/api-docs/**
+    - /api/inventory/v3/api-docs/**
+    - /api/payments/v3/api-docs/**
+
+  role-permissions:
+    ROLE_ADMIN:
+      GET:
+        - /api/users/**
+        - /api/products/**
+        - /api/categories/**
+        - /api/orders/**
+        - /api/inventory/**
+        - /api/payments/**
+      POST:
+        - /api/products/**
+        - /api/categories/**
+        - /api/orders/**
+        - /api/inventory/**
+        - /api/payments/**
+      PUT:
+        - /api/products/**
+        - /api/categories/**
+        - /api/orders/**
+        - /api/inventory/**
+        - /api/payments/**
+      DELETE:
+        - /api/products/**
+        - /api/categories/**
+        - /api/orders/**
+        - /api/inventory/**
+        - /api/payments/**
+      PATCH:
+        - /api/products/**
+        - /api/categories/**
+        - /api/orders/**
+        - /api/inventory/**
+        - /api/payments/**
+
+    ROLE_USER:
+      GET:
+        - /api/users/**
+        - /api/products/**
+        - /api/categories/**
+      POST:
+        - /api/orders/**
+        - /api/payments/**
+      PUT:
+        - /api/payments/**
+
+springdoc:
+  swagger-ui:
+    path: /swagger-ui.html
+    urls:
+      - name: user-service
+        url: /api/users/v3/api-docs
+      - name: product-service
+        url: /api/products/v3/api-docs
+      - name: category-service
+        url: /api/categories/v3/api-docs
+      - name: order-service
+        url: /api/orders/v3/api-docs
+      - name: inventory-service
+        url: /api/inventory/v3/api-docs
+      - name: payment-service
+        url: /api/payments/v3/api-docs
