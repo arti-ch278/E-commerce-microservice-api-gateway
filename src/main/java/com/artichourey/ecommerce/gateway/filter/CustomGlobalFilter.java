@@ -12,15 +12,35 @@ import reactor.core.publisher.Mono;
 @Component
 public class CustomGlobalFilter implements GlobalFilter {
 
-	private final Logger log= LoggerFactory.getLogger(CustomGlobalFilter.class);
-	
-	@Override
-	public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
-	 log.info("Global filter: request intercepted",exchange.getRequest());
-	 return chain.filter(exchange).then(Mono.fromRunnable(()->{
-		 log.info("global filter:Response Completed");
-	 }));
-		
-	}
+    private final Logger log = LoggerFactory.getLogger(CustomGlobalFilter.class);
 
-}
+//    @Override
+//    public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+//
+//        return chain.filter(exchange)
+//                .doOnSubscribe(sub ->
+//                        log.info("Global filter: request intercepted: {}",
+//                                exchange.getRequest().getURI())
+//                )
+//                .doOnSuccess(aVoid ->
+//                        log.info("Global filter: Response Completed")
+//                );
+//    }
+    
+   
+        @Override
+        public Mono<Void> filter(ServerWebExchange exchange, GatewayFilterChain chain) {
+
+            return chain.filter(exchange)
+                    .contextWrite(ctx -> ctx)
+                    .doOnEach(signal -> {
+                        if (!signal.isOnNext() && !signal.isOnComplete()) return;
+
+                        log.info("Gateway request: {}",
+                                exchange.getRequest().getURI());
+                    })
+                    .doFinally(signal ->
+                            log.info("Gateway response completed")
+                    );
+        }
+    }

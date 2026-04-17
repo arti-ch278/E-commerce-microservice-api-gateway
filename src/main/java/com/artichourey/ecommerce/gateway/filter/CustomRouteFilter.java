@@ -7,7 +7,6 @@ import org.springframework.cloud.gateway.filter.factory.AbstractGatewayFilterFac
 import org.springframework.http.server.reactive.ServerHttpRequest;
 import org.springframework.stereotype.Component;
 
-import reactor.core.publisher.Mono;
 @Component
 public class CustomRouteFilter extends AbstractGatewayFilterFactory<Object> {
 
@@ -22,16 +21,18 @@ public class CustomRouteFilter extends AbstractGatewayFilterFactory<Object> {
 
         return (exchange, chain) -> {
 
-            log.info("Route Filter: Before routing");
-
             ServerHttpRequest modifiedRequest = exchange.getRequest()
                     .mutate()
                     .header("X-Route-Header", "Added-By-Gateway")
                     .build();
 
             return chain.filter(exchange.mutate().request(modifiedRequest).build())
-                    .then(Mono.fromRunnable(() ->
-                            log.info("Route Filter: After routing")));
+                    .doOnSubscribe(sub ->
+                            log.info("Route Filter: Before routing")
+                    )
+                    .doOnSuccess(aVoid ->
+                            log.info("Route Filter: After routing")
+                    );
         };
     }
 }

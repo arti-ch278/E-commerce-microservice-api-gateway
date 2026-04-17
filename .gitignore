@@ -1,33 +1,83 @@
-HELP.md
+############################
+# Maven
+############################
 target/
-.mvn/wrapper/maven-wrapper.jar
 !**/src/main/**/target/
 !**/src/test/**/target/
 
-### STS ###
+############################
+# Logs
+############################
+*.log
+logs/
+*.out
+
+############################
+# Environment / Secrets
+############################
+.env
+.env.*
+!.env.example
+
+application-local.properties
+application-local.yml
+application-dev.properties
+application-dev.yml
+
+############################
+# OS Files
+############################
+.DS_Store
+Thumbs.db
+
+############################
+# IDE - IntelliJ
+############################
+.idea/
+*.iws
+*.iml
+*.ipr
+out/
+
+############################
+# IDE - Eclipse / STS
+############################
 .apt_generated
 .classpath
 .factorypath
 .project
-.settings
+.settings/
 .springBeans
 .sts4-cache
 
-### IntelliJ IDEA ###
-.idea
-*.iws
-*.iml
-*.ipr
-
-### NetBeans ###
+############################
+# IDE - NetBeans
+############################
 /nbproject/private/
 /nbbuild/
 /dist/
 /nbdist/
 /.nb-gradle/
+
+############################
+# VS Code
+############################
+.vscode/
+
+############################
+# Build
+############################
 build/
 !**/src/main/**/build/
 !**/src/test/**/build/
 
-### VS Code ###
-.vscode/
+############################
+# Docker
+############################
+docker-compose.override.yml
+
+############################
+# Test & Coverage
+############################
+coverage/
+*.lcov
